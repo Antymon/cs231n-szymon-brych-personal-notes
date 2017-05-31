@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Error in centered numerical derivative definition}
+\author{szymon.brych@gmail.com }
+\date{May 2017}
+
+\begin{document}
+
+\maketitle
+
+Starting from Taylor's series definition for a real value a (arbitrarily selected):
+
+$$f(x)=\frac{f^{(0)}(a)}{0!}(x-a)^0+\frac{f^{(1)}(a)}{1!}(x-a)^1+\frac{f^{(2)}(a)}{2!}(x-a)^2+...$$
+
+which can be written simpler as 
+
+$$f(x)={f(a)}+\frac{f^{(1)}(a)}{1!}(x-a)+\frac{f^{(2)}(a)}{2!}(x-a)^2+...$$
+
+In our case it's important to remember that h is a very small number, so the bigger exponent is over h, the smaller resulting value.
+
+Now let's add some substitutions:
+
+ 1. Our function will be f(x+h)
+ 2. Expansion at point zero
+
+$$f(x+h)={f(0)}+\frac{f^{(1)}(0)}{1!}(x+h)+\frac{f^{(2)}(0)}{2!}(x+h)^2+...$$
+
+Same thing for f(x-h):
+$$f(x-h)={f(0)}+\frac{f^{(1)}(0)}{1!}(x-h)+\frac{f^{(2)}(0)}{2!}(x-h)^2+...$$
+
+Let's make a substitution:
+$$\phi_i=\frac{f^{(i)}(0)}{i!}$$
+
+Then
+
+$$f(x+h)=\phi_0+\phi_1(x+h)+\phi_2(x+h)^2+\phi_3(x+h)^3+...$$
+
+And
+
+$$f(x-h)=\phi_0+\phi_1(x-h)+\phi_2(x-h)^2+\phi_3(x-h)^3+...$$
+
+Let's subtract:
+
+$$f(x+h)-f(x-h)=\phi_1(2h)+\phi_2(4hx)+\phi_3(6hx^2+2h^3)+...$$
+
+Let's replace dots with big O:
+
+$$f(x+h)-f(x-h)=\phi_1(2h)+\phi_2(4hx)+\phi_3(6hx^2+2h^3)+O(h^4)$$
+
+It's useful to extract factor 2h since that's the denominator in final equation:
+
+$$f(x+h)-f(x-h)={2h}{(\phi_1+\phi_2(2x)+\phi_3(3x^2+h^2)+O(h^3))}$$
+
+So:
+
+$$\frac{f(x+h)-f(x-h)}{2h}={\phi_1+\phi_2(2x)+\phi_3(3x^2+h^2)+O(h^3)}$$
+
+Since on the right side we still have squared h:
+
+$$\frac{f(x+h)-f(x-h)}{2h}={\phi_1+\phi_2(2x)+O(h^2)}$$
+
+Since h is a very small value, big O for smaller exponent dominates over one with larger exponent.
+
+I guess that's a verbose answer to the question. 
+
+Question's importance may come from the fact that standard form of numerical derivative has error of O(h) order. Discussed under [this wiki page.][1]
+
+
+  [1]: https://en.wikipedia.org/wiki/Numerical\_differentiation
+
+\end{document}
