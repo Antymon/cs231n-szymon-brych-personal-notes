@@ -135,8 +135,9 @@ class KNearestNeighbor(object):
     #       and two broadcast sums.                                         #
     #########################################################################
 
-    #following is most concise however blows up memory for big sets
+    #following is most concise however extremely not memory efficient
     #dists = np.sum(np.square(X[:,np.newaxis,:]-self.X_train),axis=2)
+    #again skipping sqrt due to monotonous properties discussed in the lecture
 
     # from expansion of subtraction's squared form
     tr_te_mul = np.array(np.matrix(X) * self.X_train.T)
