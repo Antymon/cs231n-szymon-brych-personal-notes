@@ -8,7 +8,8 @@ Personal notes to Stanford's cs231n course hosted at http://cs231n.github.io/
 **Assignments 2017 solutions:**
 - Assignment 1:
     - KNN classifier
-    - Linear SVM [in progress]
+    - Linear SVM 
+    - Softmax classifier [in progress]
 
 
 **References**
