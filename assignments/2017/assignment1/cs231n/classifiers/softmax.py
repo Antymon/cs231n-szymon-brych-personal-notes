@@ -34,24 +34,23 @@ def softmax_loss_naive(W, X, y, reg):
   num_train = X.shape[0]
 
   for i in xrange(num_train):
+    correct_class_index = y[i]
+
     scores = X[i].dot(W)
     scores -= np.max(scores) #subtracting constant for the sake of numeric safety; this operation is meaningless in mathematical sense
-    correct_class_index = y[i]
-    #num_incorrect = 0
-    #correct_class_score = scores[]
-    expScores = np.exp(scores)
-    normalized_correct_class_score = expScores[correct_class_index]/np.sum(expScores)
+    exp_scores = np.exp(scores)
+    normalized_scores = exp_scores/np.sum(exp_scores)
+
+    normalized_correct_class_score = normalized_scores[correct_class_index]
     loss -= np.log(normalized_correct_class_score)
-    #
-    # for j in xrange(num_classes):
-    #   if j == y[i]:
-    #     continue
-    #   margin = scores[j] - correct_class_score + 1 # note delta = 1
-    #   if margin > 0:
-    #     loss += margin
-    #     num_incorrect+=1
-    #     dW[:,j]+=X[i]
-    # dW[:, y[i]] += -num_incorrect * X[i]
+
+    #gradient in relation to score
+    dscores = normalized_scores
+    dscores[correct_class_index]-=1
+
+    #gradient in relation to weight
+    for c in xrange(num_classes):
+      dW[:,c]+=dscores[c]*X[i,:]
 
   loss /= num_train
 
