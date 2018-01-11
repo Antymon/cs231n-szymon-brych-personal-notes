@@ -32,7 +32,7 @@ def softmax_loss_naive(W, X, y, reg):
   #############################################################################
   num_classes = W.shape[1]
   num_train = X.shape[0]
-  
+
   #num_dim = X.shape[1]
 
   for i in xrange(num_train):
@@ -91,38 +91,32 @@ def softmax_loss_vectorized(W, X, y, reg):
   num_train = X.shape[0]
 
   scores = X.dot(W)
-  scores -= np.tile(np.max(scores,1),(num_classes,1)).transpose() #subtracting constant for the sake of numeric safety; this operation is meaningless in mathematical sense
+  #subtracting constant for the sake of numeric safety
+  #this operation is meaningless result-wise aside from numeric concerns
+  scores -= np.tile(np.max(scores,1),(num_classes,1)).transpose()
   exp_scores = np.exp(scores)
 
-  sums = np.sum(exp_scores,1)
-  inv_sums = np.tile(1 / sums, (num_classes, 1)) #tiled to match size
-  normalized_scores = exp_scores*inv_sums.transpose()
+  #if keepdims is off tiling would be needed
+  #as matrix mul and div are component-wise, not matrix operations
+  sums = np.sum(exp_scores,1,keepdims=True)
+  normalized_scores = exp_scores/sums
 
   normalized_correct_class_score = normalized_scores[np.arange(num_train),y]
-  loss -= np.sum(np.log(normalized_correct_class_score))
+  loss -= np.sum(np.log(normalized_correct_class_score)) / num_train
+  loss += reg * np.sum(W * W)
 
   #gradient in relation to score
   dscores = normalized_scores
   dscores[np.arange(num_train),y]-=1
 
+  #gradient in relation to weight
   dW=np.transpose(X).dot(dscores)
-
-  loss /= num_train
-
   dW /= num_train
-  loss += reg * np.sum(W * W)
+
+  #regularization gradient
   dW+= 2* reg * W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
 
   return loss, dW
-
-# W = np.array([[1.,6.],[2.,7.],[3.,9.]]) #3x2 DxC
-# X = np.array([[4.,5.,6.],[7.,8.,9.],[4.,5.,6.],[7.,8.,9.]]) #4x3 NxD
-# y = [1,0,0,1] #4x1 N,
-# reg = 0.5
-#
-# (loss,dW) = softmax_loss_naive(W,X,y,reg)
-# (loss,dW) = softmax_loss_vectorized(W,X,y,reg)
-# pass
