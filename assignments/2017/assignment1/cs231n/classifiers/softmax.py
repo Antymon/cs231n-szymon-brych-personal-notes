@@ -32,6 +32,8 @@ def softmax_loss_naive(W, X, y, reg):
   #############################################################################
   num_classes = W.shape[1]
   num_train = X.shape[0]
+  
+  #num_dim = X.shape[1]
 
   for i in xrange(num_train):
     correct_class_index = y[i]
@@ -50,6 +52,10 @@ def softmax_loss_naive(W, X, y, reg):
 
     #gradient in relation to weight
     for c in xrange(num_classes):
+      # super slow, fully looped:
+      # for n in xrange(num_dim):
+      #   dW[n,c]+=dscores[c]*X[i,n]
+      # one level of vectorization:
       dW[:,c]+=dscores[c]*X[i,:]
 
   loss /= num_train
