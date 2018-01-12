@@ -87,13 +87,12 @@ def softmax_loss_vectorized(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  num_classes = W.shape[1]
   num_train = X.shape[0]
 
   scores = X.dot(W)
   #subtracting constant for the sake of numeric safety
   #this operation is meaningless result-wise aside from numeric concerns
-  scores -= np.tile(np.max(scores,1),(num_classes,1)).transpose()
+  scores -= np.max(scores,1,keepdims=True)
   exp_scores = np.exp(scores)
 
   #if keepdims is off tiling would be needed
