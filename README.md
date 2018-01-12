@@ -9,7 +9,8 @@ Personal notes to Stanford's cs231n course hosted at http://cs231n.github.io/
 - Assignment 1:
     - KNN classifier
     - Linear SVM 
-    - Softmax classifier [in progress]
+    - Softmax classifier 
+    - Two layer neural network [in progress]
 
 
 **References**
