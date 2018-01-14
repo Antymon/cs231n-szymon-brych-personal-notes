@@ -76,7 +76,9 @@ class TwoLayerNet(object):
     # Store the result in the scores variable, which should be an array of      #
     # shape (N, C).                                                             #
     #############################################################################
-    pass
+    fc1 = X.dot(W1) + b1
+    relu = np.maximum(fc1,0)
+    scores = relu.dot(W2)+b2
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
@@ -93,7 +95,21 @@ class TwoLayerNet(object):
     # in the variable loss, which should be a scalar. Use the Softmax           #
     # classifier loss.                                                          #
     #############################################################################
-    pass
+    # subtracting constant for the sake of numeric safety
+    # this operation is meaningless result-wise aside from numeric concerns
+    scores -= np.max(scores, 1, keepdims=True)
+    exp_scores = np.exp(scores)
+
+    # if keepdims is off tiling would be needed
+    # as matrix mul and div are component-wise, not matrix operations
+    sums = np.sum(exp_scores, 1, keepdims=True)
+    normalized_scores = exp_scores / sums
+
+    normalized_correct_class_score = normalized_scores[np.arange(N), y]
+    loss =- np.sum(np.log(normalized_correct_class_score)) / N
+    loss += reg * np.sum(W1 * W1)
+    loss += reg * np.sum(W2 * W2)
+
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
@@ -105,7 +121,24 @@ class TwoLayerNet(object):
     # and biases. Store the results in the grads dictionary. For example,       #
     # grads['W1'] should store the gradient on W1, and be a matrix of same size #
     #############################################################################
-    pass
+    # gradient in relation to score
+    dscores = normalized_scores
+    dscores[np.arange(N), y] -= 1
+
+    grads['W2'] = np.transpose(relu).dot(dscores) / N
+    grads['b2'] = dscores.sum(axis=0) / N
+
+    drelu = dscores.dot(np.transpose(W2))
+    dfc1 = drelu*np.sign(relu)
+
+    grads['W1'] = np.transpose(X).dot(dfc1) / N
+    grads['b1'] = dfc1.sum(axis=0) / N
+
+    # regularization gradient
+    grads['W2'] += 2 * reg * W2
+    grads['W1'] += 2 * reg * W1
+
+
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
