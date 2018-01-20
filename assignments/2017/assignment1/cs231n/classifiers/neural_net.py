@@ -76,8 +76,13 @@ class TwoLayerNet(object):
     # Store the result in the scores variable, which should be an array of      #
     # shape (N, C).                                                             #
     #############################################################################
+    #fully connected layer 1 output
     fc1 = X.dot(W1) + b1
+
+    #non linear twist output
     relu = np.maximum(fc1,0)
+
+    #scores aka fully connected layer 2 output taking relu as input
     scores = relu.dot(W2)+b2
     #############################################################################
     #                              END OF YOUR CODE                             #
@@ -97,12 +102,12 @@ class TwoLayerNet(object):
     #############################################################################
     # subtracting constant for the sake of numeric safety
     # this operation is meaningless result-wise aside from numeric concerns
-    scores -= np.max(scores, 1, keepdims=True)
+    scores -= np.max(scores, axis=1, keepdims=True)
     exp_scores = np.exp(scores)
 
     # if keepdims is off tiling would be needed
     # as matrix mul and div are component-wise, not matrix operations
-    sums = np.sum(exp_scores, 1, keepdims=True)
+    sums = np.sum(exp_scores, axis=1, keepdims=True)
     normalized_scores = exp_scores / sums
 
     normalized_correct_class_score = normalized_scores[np.arange(N), y]
@@ -182,7 +187,10 @@ class TwoLayerNet(object):
       # TODO: Create a random minibatch of training data and labels, storing  #
       # them in X_batch and y_batch respectively.                             #
       #########################################################################
-      pass
+
+      batch_indeces = np.random.choice(num_train,batch_size,replace=True)
+      X_batch = X[batch_indeces]
+      y_batch = y[batch_indeces]
       #########################################################################
       #                             END OF YOUR CODE                          #
       #########################################################################
@@ -197,7 +205,11 @@ class TwoLayerNet(object):
       # using stochastic gradient descent. You'll need to use the gradients   #
       # stored in the grads dictionary defined above.                         #
       #########################################################################
-      pass
+      self.params['W1']-=learning_rate*grads['W1']
+      self.params['W2']-=learning_rate*grads['W2']
+      self.params['b1']-=learning_rate*grads['b1']
+      self.params['b2']-=learning_rate*grads['b2']
+
       #########################################################################
       #                             END OF YOUR CODE                          #
       #########################################################################
@@ -242,7 +254,14 @@ class TwoLayerNet(object):
     ###########################################################################
     # TODO: Implement this function; it should be VERY simple!                #
     ###########################################################################
-    pass
+    W1, b1 = self.params['W1'], self.params['b1']
+    W2, b2 = self.params['W2'], self.params['b2']
+
+    fc1 = X.dot(W1) + b1
+    relu = np.maximum(fc1,0)
+    scores = relu.dot(W2)+b2
+
+    y_pred = np.argmax(scores,axis=1)
     ###########################################################################
     #                              END OF YOUR CODE                           #
     ###########################################################################
